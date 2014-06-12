@@ -1,5 +1,4 @@
 ﻿
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -73,13 +72,21 @@ namespace LegacySystem.IO
         {
 #if NETFX_CORE
             path = FixPath(path);
-            var thread = ReadAllBytesAsync(path);
+
+            /*var thread = ReadAllBytesAsync(path);
             thread.Wait();
 
             if (thread.IsCompleted)
                 return thread.Result;
 
-            throw thread.Exception;
+            throw thread.Exception;*/
+
+            Stream file = Open(path);
+            byte[] data = new byte[file.Length];
+            file.Read(data, 0, (int)file.Length);
+            file.Close();
+
+            return data;
 #else
             throw new NotImplementedException();
 #endif
@@ -100,6 +107,10 @@ namespace LegacySystem.IO
         {
 #if NETFX_CORE
             path = FixPath(path);
+            //create file if not exist
+            if (!Exists(path))
+                CreateText(path).Close();
+            //write text
             var thread = PathIO.WriteTextAsync(path, data).AsTask();
             thread.Wait();
 #else
@@ -254,13 +265,14 @@ namespace LegacySystem.IO
             throw thread.Exception;
         }
 
+
         private static async Task MoveAsync(string source, string destination)
         {
             var file = await StorageFile.GetFileFromPathAsync(source);
-            var destinatinoFolder = await StorageFolder.GetFolderFromPathAsync(destination);
-            if (file != null && destinatinoFolder != null)
+            var destinationFolder = await StorageFolder.GetFolderFromPathAsync(destination);
+            if (file != null && destinationFolder != null)
             {
-                await file.MoveAsync(destinatinoFolder);
+                await file.MoveAsync(destinationFolder);
             }
         }
 
@@ -270,20 +282,7 @@ namespace LegacySystem.IO
             var stream = await file.OpenStreamForReadAsync();
             return stream;
         }
-
-        private static async Task CopyAsync(string source, string destination, NameCollisionOption collisionOption)
-        {
-            var file = await StorageFile.GetFileFromPathAsync(source);
-            destination = destination.Replace('/', '\\');
-            int lastSlash = destination.LastIndexOf('\\');
-            string folderName = destination.Substring(0, lastSlash);
-            var destinatinoFolder = await StorageFolder.GetFolderFromPathAsync(folderName);
-            if (file != null && destinatinoFolder != null){
-                file.CopyAsync(destinatinoFolder, destination.Substring(lastSlash), collisionOption);
-            }
-
-        }
-
+        
         private static async Task<StreamReader> OpenTextAsync(string path)
         {
             var file = await StorageFile.GetFileFromPathAsync(path);
@@ -299,13 +298,18 @@ namespace LegacySystem.IO
             return new EncryptedStreamReader(stream);
         }
 
-        private static string FixPath(string path)
+        private static async Task CopyAsync(string source, string destination, NameCollisionOption collisionOption)
         {
-            return path.Replace('/', '\\');
+            var file = await StorageFile.GetFileFromPathAsync(source);
+            destination = FixPath(destination);
+            string folderName = Path.GetDirectoryName(destination);
+            var destinatinoFolder = await StorageFolder.GetFolderFromPathAsync(folderName);
+            if (file != null && destinatinoFolder != null)
+            {
+                await file.CopyAsync(destinatinoFolder, Path.GetFileName(destination), collisionOption);
+            }
+
         }
-
-        /* Copy ********************************************************************/
-
         private static async Task CopyAsync(string sourceFileName, string destFileName, bool overwrite)
         {
             if (!overwrite && Exists(destFileName))
@@ -347,8 +351,8 @@ namespace LegacySystem.IO
 
         private static async Task<byte[]> ReadAllBytesAsync(string path)
         {
-            var buffer = await PathIO.ReadBufferAsync(path);
-            using (var dr = DataReader.FromBuffer(buffer))
+            IBuffer buffer = await PathIO.ReadBufferAsync(path);
+            using (DataReader dr = DataReader.FromBuffer(buffer))
             {
                 await dr.LoadAsync(buffer.Length);
                 byte[] data = new byte[buffer.Length];
@@ -379,6 +383,11 @@ namespace LegacySystem.IO
             return new EncryptedStreamWriter(str);
         }
 
+
+        public static string FixPath(string path)
+        {
+            return path.Replace('/', '\\');
+        }
 #endif
 
     }

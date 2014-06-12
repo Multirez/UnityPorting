@@ -47,18 +47,4 @@ namespace LegacySystem.IO
             File.WriteAllText(path, data);
         }
     }
-
-    class TestClass
-    {
-       
-        void Test()
-        {
-            MethodInfo mi = typeof(FileInfo).GetType().GetTypeInfo().GetDeclaredMethod("dsfds");
-        }
-
-        void MyMethod()
-        {
-
-        }
-    }
 }

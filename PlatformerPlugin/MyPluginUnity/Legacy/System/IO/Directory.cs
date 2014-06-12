@@ -58,7 +58,9 @@ namespace LegacySystem.IO
             if (t.IsCompleted)
                 return t.Result;
             else
+            {
                 return false;
+            }
 #else
             throw new NotImplementedException();
 #endif
@@ -99,16 +101,24 @@ namespace LegacySystem.IO
         /// </summary>
         private static async Task<bool> CreateDirectoryAsync(string folderName)
         {
-
+            //fix folder path
+            folderName = File.FixPath(folderName);
             try
             {
-                await ApplicationData.Current.LocalFolder.CreateFolderAsync(folderName, CreationCollisionOption.ReplaceExisting);
-                return true;
+                if (folderName[folderName.Length - 1] == '\\')//remove slash in the end if exist
+                    folderName = folderName.Substring(0, folderName.Length-1);
+
+                int lastSlashIndex=folderName.LastIndexOf('\\');
+                string parentPath = folderName.Substring(0, lastSlashIndex);
+                StorageFolder parentFolder = await StorageFolder.GetFolderFromPathAsync(parentPath);
+                await parentFolder.CreateFolderAsync(folderName.Substring(lastSlashIndex+1), CreationCollisionOption.ReplaceExisting);
             }
             catch (Exception ex)
             {
-                return false;
-            }
+                ex.Data.Add("Path", folderName);
+                throw new Exception("Error! Can't create directory: "+folderName, ex);
+            } 
+            return true;   
         }
         private static async Task<bool> DeleteDirectoryAsync(string folderName)
         {
