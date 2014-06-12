@@ -97,7 +97,7 @@ namespace LegacySystem.IO
 #if NETFX_CORE
 
         /// <summary>
-        /// Creates a folder in local iso storage
+        /// Creates a folder using an absolute path
         /// </summary>
         private static async Task<bool> CreateDirectoryAsync(string folderName)
         {
@@ -131,7 +131,8 @@ namespace LegacySystem.IO
             }
             catch (Exception ex)
             {
-                return false;
+                ex.Data.Add("Path", folderName);
+                throw new Exception("Error! Can't delete directory: "+folderName, ex);
             }
         }
 
@@ -161,9 +162,10 @@ namespace LegacySystem.IO
                     result[i] = Path.Combine(path, files[i].Name);
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
-                return null;
+                ex.Data.Add("Path", path);
+                throw new Exception("Error! Can't return files: "+path, ex);
             }
         }
 
@@ -179,9 +181,10 @@ namespace LegacySystem.IO
                     result[i] = Path.Combine(path, folders[i].Name);
                 return result;
             }
-            catch
+            catch (Exception ex)
             {
-                return null;
+                ex.Data.Add("Path", path);
+                throw new Exception("Error! Can't return directories: "+path, ex);
             }
         }
 
