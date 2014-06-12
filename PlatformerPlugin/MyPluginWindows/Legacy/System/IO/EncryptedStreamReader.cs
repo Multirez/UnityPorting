@@ -9,7 +9,7 @@ namespace LegacySystem.IO
 {
     internal class EncryptedStreamReader : StreamReader
     {
-        public EncryptedStreamReader(Stream stream)
+        public EncryptedStreamReader(System.IO.Stream stream)
             : base(stream)
         {
         }

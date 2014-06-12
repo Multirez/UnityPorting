@@ -10,7 +10,7 @@ namespace LegacySystem.IO
 {
     internal class EncryptedStreamWriter : StreamWriter
     {
-        public EncryptedStreamWriter(Stream str)
+        public EncryptedStreamWriter(System.IO.Stream str)
             : base(str)
         {
         }

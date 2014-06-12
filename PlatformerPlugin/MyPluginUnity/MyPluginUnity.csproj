@@ -49,8 +49,11 @@
     <Compile Include="Legacy\System\Collections\Hashtable.cs" />
     <Compile Include="Legacy\System\Collections\Specialized\IOrderedDictionary.cs" />
     <Compile Include="Legacy\System\Collections\Specialized\OrderedDictionary.cs" />
+    <Compile Include="Legacy\System\IO\FileInfo.cs" />
+    <Compile Include="Legacy\System\IO\StreamHelper.cs" />
     <Compile Include="Legacy\System\IO\Directory.cs" />
     <Compile Include="Legacy\System\IO\File.cs" />
+    <Compile Include="Legacy\System\IO\MemoryStream.cs" />
     <Compile Include="Legacy\System\MissingExtensions.cs" />
     <Compile Include="Legacy\System\Net\Sockets\TcpClient.cs" />
     <Compile Include="Legacy\System\ReflectionExtensions.cs" />

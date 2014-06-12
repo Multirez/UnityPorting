@@ -106,19 +106,8 @@ namespace LegacySystem.IO
             throw new NotImplementedException();
 #endif
         }
-
-        public static void Delete(string path)
-        {
-#if NETFX_CORE
-            path = FixPath(path);
-            var thread = DeleteAsync(path);
-            thread.Wait();
-#else
-            throw new NotImplementedException();
-#endif
-        }
-
-        public static Stream Open(string path)
+        
+        public static System.IO.Stream Open(string path)
         {
 #if NETFX_CORE
             path = FixPath(path);
@@ -134,7 +123,29 @@ namespace LegacySystem.IO
 #endif
         }
 
-        public static Stream Create(string path)
+        public static void Copy(string source, string dest, bool isRewrite)
+        {
+#if NETFX_CORE
+            source = FixPath(source);
+            dest = FixPath(dest);
+
+            NameCollisionOption collisionOption;
+            if(isRewrite)
+                collisionOption = NameCollisionOption.ReplaceExisting;
+            else
+                collisionOption = NameCollisionOption.FailIfExists;
+
+            var thread = CopyAsync(source, dest, collisionOption);
+            thread.Wait();
+
+            if (!thread.IsCompleted)
+                throw thread.Exception;
+#else
+            throw new NotImplementedException();
+#endif
+        }
+
+        public static System.IO.Stream Create(string path)
         {
 #if NETFX_CORE
             path = FixPath(path);
@@ -145,6 +156,17 @@ namespace LegacySystem.IO
                 return thread.Result;
 
             throw thread.Exception;
+#else
+            throw new NotImplementedException();
+#endif
+        }
+
+        public static void Delete(string path)
+        {
+#if NETFX_CORE
+            path = FixPath(path);
+            var thread = DeleteAsync(path);
+            thread.Wait();
 #else
             throw new NotImplementedException();
 #endif
@@ -242,11 +264,24 @@ namespace LegacySystem.IO
             }
         }
 
-        private static async Task<Stream> OpenAsync(string path)
+        private static async Task<System.IO.Stream> OpenAsync(string path)
         {
             var file = await StorageFile.GetFileFromPathAsync(path);
             var stream = await file.OpenStreamForReadAsync();
             return stream;
+        }
+
+        private static async Task CopyAsync(string source, string destination, NameCollisionOption collisionOption)
+        {
+            var file = await StorageFile.GetFileFromPathAsync(source);
+            destination = destination.Replace('/', '\\');
+            int lastSlash = destination.LastIndexOf('\\');
+            string folderName = destination.Substring(0, lastSlash);
+            var destinatinoFolder = await StorageFolder.GetFolderFromPathAsync(folderName);
+            if (file != null && destinatinoFolder != null){
+                file.CopyAsync(destinatinoFolder, destination.Substring(lastSlash), collisionOption);
+            }
+
         }
 
         private static async Task<StreamReader> OpenTextAsync(string path)
@@ -328,7 +363,7 @@ namespace LegacySystem.IO
                 await file.DeleteAsync();
         }
 
-        private static async Task<Stream> CreateAsync(string path)
+        private static async Task<System.IO.Stream> CreateAsync(string path)
         {
             var dirName = Path.GetDirectoryName(path);
             var filename = Path.GetFileName(path);

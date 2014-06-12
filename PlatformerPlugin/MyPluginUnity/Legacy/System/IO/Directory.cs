@@ -25,6 +25,17 @@ namespace LegacySystem.IO
 #endif
         }
 
+        public static string[] GetDirectories(string path)
+        {
+#if NETFX_CORE
+            var t = GetFoldersAsync(path.Replace('/', '\\'));
+            t.Wait();
+            return t.Result;
+#else
+            throw new NotImplementedException();
+#endif
+        }
+
         public static bool Exists(string path)
         {
 #if NETFX_CORE
@@ -43,6 +54,25 @@ namespace LegacySystem.IO
         {
 #if NETFX_CORE
             var t = CreateDirectoryAsync(path);
+            t.Wait();
+            if (t.IsCompleted)
+                return t.Result;
+            else
+                return false;
+#else
+            throw new NotImplementedException();
+#endif
+        }
+        
+        public static bool Delete(string path, bool isRecursive)
+        {
+            //default recursive delete supports only
+            return Delete(path);
+        }
+        public static bool Delete(string path)
+        {
+#if NETFX_CORE
+            var t = DeleteDirectoryAsync(path);
             t.Wait();
             if (t.IsCompleted)
                 return t.Result;
@@ -80,6 +110,20 @@ namespace LegacySystem.IO
                 return false;
             }
         }
+        private static async Task<bool> DeleteDirectoryAsync(string folderName)
+        {
+
+            try
+            {
+                var folder = await StorageFolder.GetFolderFromPathAsync(folderName);
+                await folder.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
 
 
         private static async Task<bool> ExistsAsync(string path)
@@ -105,6 +149,24 @@ namespace LegacySystem.IO
 
                 for (int i = 0; i < files.Count; i++)
                     result[i] = Path.Combine(path, files[i].Name);
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static async Task<string[]> GetFoldersAsync(string path)
+        {
+            try
+            {
+                var folder = await StorageFolder.GetFolderFromPathAsync(path);
+                var folders = await folder.GetFoldersAsync();
+                var result = new string[folders.Count];
+
+                for (int i = 0; i < folders.Count; i++)
+                    result[i] = Path.Combine(path, folders[i].Name);
                 return result;
             }
             catch

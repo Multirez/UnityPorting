@@ -133,6 +133,15 @@
     <Compile Include="..\MyPluginUnity\Legacy\System\IO\File.cs">
       <Link>Legacy\System\IO\File.cs</Link>
     </Compile>
+    <Compile Include="..\MyPluginUnity\Legacy\System\IO\FileInfo.cs">
+      <Link>Legacy\System\IO\FileInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\MyPluginUnity\Legacy\System\IO\MemoryStream.cs">
+      <Link>Legacy\System\IO\MemoryStream.cs</Link>
+    </Compile>
+    <Compile Include="..\MyPluginUnity\Legacy\System\IO\StreamHelper.cs">
+      <Link>Legacy\System\IO\StreamHelper.cs</Link>
+    </Compile>
     <Compile Include="..\MyPluginUnity\Legacy\System\MissingExtensions.cs">
       <Link>Legacy\System\MissingExtensions.cs</Link>
     </Compile>
