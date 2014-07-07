@@ -232,40 +232,7 @@ namespace LegacySystem.IO
 
 #if NETFX_CORE
 
-
-        private static EncryptedStreamReader OpenEncryptedText(string path)
-        {
-            path = FixPath(path);
-            if (Exists(path))
-            {
-                var thread = OpenEncryptedTextAsync(path);
-                thread.Wait();
-
-                if (thread.IsCompleted)
-                    return thread.Result;
-
-                throw thread.Exception;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        private static EncryptedStreamWriter CreateEncryptedText(string path)
-        {
-
-            path = FixPath(path);
-            var thread = CreateEncryptedTextAsync(path);
-            thread.Wait();
-
-            if (thread.IsCompleted)
-                return thread.Result;
-
-            throw thread.Exception;
-        }
-
-
+        
         private static async Task MoveAsync(string source, string destination)
         {
             var file = await StorageFile.GetFileFromPathAsync(source);
@@ -290,13 +257,6 @@ namespace LegacySystem.IO
             return new StreamReader(stream);
         }
 
-        private static async Task<EncryptedStreamReader> OpenEncryptedTextAsync(string path)
-        {
-            var file = await StorageFile.GetFileFromPathAsync(path);
-
-            var stream = await file.OpenStreamForReadAsync();
-            return new EncryptedStreamReader(stream);
-        }
 
         private static async Task CopyAsync(string source, string destination, NameCollisionOption collisionOption)
         {
@@ -375,12 +335,6 @@ namespace LegacySystem.IO
             var dir = await StorageFolder.GetFolderFromPathAsync(dirName);
             var file = await dir.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
             return await file.OpenStreamForWriteAsync();
-        }
-
-        private static async Task<EncryptedStreamWriter> CreateEncryptedTextAsync(string path)
-        {
-            var str = await CreateAsync(path);
-            return new EncryptedStreamWriter(str);
         }
 
 

@@ -10,17 +10,5 @@ namespace LegacySystem.IO
             stream.Dispose();
             GC.SuppressFinalize(stream);
         }
-
-        public static void Close(this StreamReader reader)
-        {
-            reader.Dispose();
-            GC.SuppressFinalize(reader);
-        }
-
-        public static void Close(this StreamWriter writer)
-        {
-            writer.Dispose();
-            GC.SuppressFinalize(writer);
-        }
     }
 }

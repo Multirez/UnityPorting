@@ -142,6 +142,12 @@
     <Compile Include="..\MyPluginUnity\Legacy\System\IO\StreamHelper.cs">
       <Link>Legacy\System\IO\StreamHelper.cs</Link>
     </Compile>
+    <Compile Include="..\MyPluginUnity\Legacy\System\IO\StreamReader.cs">
+      <Link>Legacy\System\IO\StreamReader.cs</Link>
+    </Compile>
+    <Compile Include="..\MyPluginUnity\Legacy\System\IO\StreamWriter.cs">
+      <Link>Legacy\System\IO\StreamWriter.cs</Link>
+    </Compile>
     <Compile Include="..\MyPluginUnity\Legacy\System\MissingExtensions.cs">
       <Link>Legacy\System\MissingExtensions.cs</Link>
     </Compile>
@@ -165,8 +171,6 @@
     <Compile Include="Facebook\FacebookRequest.cs" />
     <Compile Include="Facebook\NavigationState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Legacy\System\IO\EncryptedStreamReader.cs" />
-    <Compile Include="Legacy\System\IO\EncryptedStreamWriter.cs" />
     <Compile Include="Legacy\System\IO\EncryptionProvider.cs" />
   </ItemGroup>
   <ItemGroup>

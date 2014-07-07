@@ -54,6 +54,8 @@
     <Compile Include="Legacy\System\IO\Directory.cs" />
     <Compile Include="Legacy\System\IO\File.cs" />
     <Compile Include="Legacy\System\IO\MemoryStream.cs" />
+    <Compile Include="Legacy\System\IO\StreamReader.cs" />
+    <Compile Include="Legacy\System\IO\StreamWriter.cs" />
     <Compile Include="Legacy\System\MissingExtensions.cs" />
     <Compile Include="Legacy\System\Net\Sockets\TcpClient.cs" />
     <Compile Include="Legacy\System\ReflectionExtensions.cs" />
